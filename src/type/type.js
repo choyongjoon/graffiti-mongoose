@@ -24,6 +24,7 @@ import { addHooks } from '../utils';
 import GraphQLDate from './custom/date';
 import GraphQLBuffer from './custom/buffer';
 import GraphQLGeneric from './custom/generic';
+import createInputObject from './custom/to-input-object';
 import { connectionFromModel, getOneResolver } from '../query';
 
 // Registered types will be saved, we can access them later to resolve types
@@ -163,6 +164,23 @@ function getArguments(type, args = {}) {
 
     if (field.type instanceof GraphQLScalarType) {
       args[field.name] = field;
+    } else if (field.type instanceof GraphQLObjectType) {
+      if (field.type.name.endsWith('Connection')) {
+        args[field.name] = {
+          name: field.name,
+          type: new GraphQLList(GraphQLID)
+        };
+      } else if (field.type.mongooseEmbedded) {
+        args[field.name] = {
+          name: field.name,
+          type: createInputObject(field.type)
+        };
+      } else {
+        args[field.name] = {
+          name: field.name,
+          type: GraphQLID
+        };
+      }
     }
 
     return args;
