@@ -31,6 +31,18 @@ describe('schema', () => {
         baz: {
           name: 'baz',
           type: GraphQLID
+        },
+        ref: {
+          name: 'ref',
+          type: new GraphQLObjectType({
+            name: 'Ref',
+            fields: () => ({
+              foo: {
+                name: 'foo',
+                type: GraphQLString
+              }
+            })
+          })
         }
       })
     }),
@@ -69,6 +81,18 @@ describe('schema', () => {
             bar: {
               name: 'bar',
               type: GraphQLString
+            },
+            baz: {
+              name: 'baz',
+              type: {
+                name: 'ID'
+              }
+            },
+            ref: {
+              name: 'ref',
+              type: {
+                name: 'ID'
+              }
             }
           }
         }
